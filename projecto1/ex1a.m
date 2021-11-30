@@ -6,9 +6,9 @@ f = 1000000;
 delays = zeros(1, length(l));
 errors = zeros(1, length(l));
 
-%Number of simulations
+N = 50;
+
 for j = 1:length(l)
-    N = 50;
     
     PL = zeros(1, N);
     APD = zeros(1, N);
@@ -18,9 +18,7 @@ for j = 1:length(l)
     for i = 1:N
         [PL(i), APD(i), MPD(i), TT(i)] = Simulator1(l(j),C,f,P);
     end
-    
-    alfa = 0.1;
-    
+    alfa = 0.1;    
     
     media = mean(APD);
     term = norminv(1-alfa/2)*sqrt(var(APD)/N);

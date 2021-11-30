@@ -9,9 +9,8 @@ errorsd = zeros(1, length(f));
 loss = zeros(1, length(f));
 errorsl = zeros(1, length(f));
 
-%Number of simulations
+N = 50;
 for j = 1:length(f)
-    N = 50;
     
     PL = zeros(1, N);
     APD = zeros(1, N);
