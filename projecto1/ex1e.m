@@ -3,7 +3,7 @@ N = 50;
 
 lambda = 1800;  % pps
 f = 1000000;
-C = [10, 20, 50, 100];         % Mbps
+C = [10, 20, 30, 40];         % Mbps
 P = 10000;      % packets
 
 alfa = 0.1;
@@ -29,8 +29,8 @@ for i = [1:4]
     term(i, 3) = norminv(1-alfa/2) * sqrt(var(APD_s1518(i,:))/N);
 end
 
-C = categorical({'10','20','50','100'});
-C = reordercats(C,{'10','20','50','100'});
+C = categorical({'10','20','30','40'});
+C = reordercats(C,{'10','20','30','40'});
 b = bar(C, media, "grouped");
 hold on
 % Calculate the number of groups and number of bars in each group
