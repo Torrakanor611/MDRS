@@ -1,18 +1,12 @@
-%P = 10000;   %Critério de paragem
-l = 1800;    %Packet rate
-C = [10, 20, 30, 40];      %Capacidade do link
-f = 1000000; %Tamanho da queue
+l = 1800;               %Packet rate
+C = [10, 20, 30, 40];   %Link Capacity
+f = 1000000;            %Queue
 
+%Calculation of the probability associated to each packet size 
+% (other than the sizes 64, 110 and 1518 bytes) 
 numelems = (109 - 65 + 1) + (1517 - 111 + 1);
 probrestante = 100 - (19 + 23 + 17);
 probcadaelem = (probrestante / numelems);
-
-a = 65:109;
-a = a*(probcadaelem/100);
-b = 111:1517;
-b = b*(probcadaelem/100);
-
-numMedioBytes = 0.19*64 + 0.23*110 + 0.17*1518 + sum(a) + sum(b);
 
 bytes = 64:1518;
 
