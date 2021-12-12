@@ -46,3 +46,4 @@ hold off
 title("Avg. Packet Delay");
 xlabel("C, link capacity (Mbs)");
 ylabel("APD, Avg. Packet Delay (ms)");
+legend({'64 bytes', '110 bytes', '1518 bytes'});
