@@ -96,5 +96,5 @@ hold off
 
 linkaxes([t1, t2, t3, t4], 'y');
 
-title(t, "APD and PL for data and VoIP with diferente number of VoIP flows(n), considering Priority Queuing(Voip > data)");
+title(t, "APD and PL for data and VoIP with diferent number of VoIP flows(n), considering Priority Queuing (Simplified WRED)");
 ylabel(t, "APD, APDv (ms) | PL, PLv (%)")
