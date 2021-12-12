@@ -5,13 +5,11 @@ C = 10;
 f = 1000000;
 n = [10, 20, 30, 40];
 
-datadelay = zeros(1, length(n));
-errorsdata = zeros(1, length(n));
-voipdelay = zeros(1, length(n));
-errorsvoip = zeros(1, length(n));
+delay = zeros(4, 2);
+errors = zeros(4, 2);
 
 N = 50;
-for j = 1:length(datadelay)
+for j = 1:length(n)
     PLd = zeros(1, N);
     PLv = zeros(1, N);
     APDd = zeros(1, N);
@@ -28,36 +26,31 @@ for j = 1:length(datadelay)
     media = mean(APDd);
     term = norminv(1-alfa/2)*sqrt(var(APDd)/N);
     fprintf("Av. Packet Delay data (ms)    = %.2e +- %.2e\n", media, term);
-    datadelay(j) = media;
-    errorsdata(j) = term;
+    delay(j, 1) = media;
+    errors(j, 1) = term;
 
     media = mean(APDv);
     term = norminv(1-alfa/2)*sqrt(var(APDv)/N);
     fprintf("Av. Packet Delay VoIP (ms)    = %.2e +- %.2e\n", media, term);
-    voipdelay(j) = media;
-    errorsvoip(j) = term;
+    delay(j, 2) = media;
+    errors(j, 2) = term;
 end
 
-
-figure(1)
-bar(n, datadelay)
-title("Average Data Packet Delay")
-xlabel("Number of aditional VoIP packet Flows")
-ylabel("Average Data Packet Delay (ms)")
+f = figure('Name','Ex. 2.a)','NumberTitle','off');
+b = bar(n, delay, "grouped");
 hold on
-er = errorbar(n, datadelay, errorsdata, errorsdata);
-er.Color = [0 0 0];
-er.LineStyle = 'none';
-hold off;
+% Calculate the number of groups and number of bars in each group
+[ngroups,nbars] = size(delay);
+% Get the x coordinate of the bars
+x = nan(nbars, ngroups);
+for i = 1:nbars
+    x(i,:) = b(i).XEndPoints;
+end
+er = errorbar(x', delay, errors, 'k','linestyle','none');
+grid on
+hold off
 
-
-figure(2)
-bar(n, voipdelay)
-title("Average Voip Packet Delay")
-xlabel("Number of aditional VoIP packet Flows")
-ylabel("Average Voip Packet Delay (ms)")
-hold on
-er = errorbar(n, voipdelay, errorsvoip, errorsvoip);
-er.Color = [0 0 0];
-er.LineStyle = 'none';
-hold off;
+title("Average Packet Delay")
+xlabel("Number VoIP packet Flows(n)")
+ylabel("Delay (ms)")
+legend({'Data', 'VoIP'}, 'Location', 'northwest');
