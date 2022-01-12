@@ -29,6 +29,8 @@ for i = [1:4]
     term(i, 3) = norminv(1-alfa/2) * sqrt(var(APD_s1518(i,:))/N);
 end
 
+disp(media(1,:));
+
 C = categorical({'10','20','30','40'});
 C = reordercats(C,{'10','20','30','40'});
 b = bar(C, media, "grouped");
@@ -45,5 +47,5 @@ hold off
 
 title("Avg. Packet Delay");
 xlabel("C, link capacity (Mbs)");
-ylabel("APD, Avg. Packet Delay (ms)");
+ylabel("Delay (ms)");
 legend({'64 bytes', '110 bytes', '1518 bytes'});

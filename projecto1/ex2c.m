@@ -25,12 +25,12 @@ for i = n
     w1 = ((lambda1 * ES1_2 + lambda2 * ES2_2) / (2 * (1 - p1))) + ES1;
     % to ms
     w1 = w1 * 1e3;
-    fprintf("n=%i -> w1 = %0.2f ms\n", i, w1);
+    fprintf('n=%i -> w1 = %0.2f ms\n', i, w1);
     y(i/10) = w1;
 end
 
 figure(2);
 bar(n, y);
-title("Average Voip Packet Delay (Teorical)")
-xlabel("Number of VoIP packet Flows")
-ylabel("Average Voip Packet Delay (ms)")
+title('Average Voip Packet Delay (Teorical)')
+xlabel('Number of VoIP packet Flows')
+ylabel('Average Voip Packet Delay (ms)')
