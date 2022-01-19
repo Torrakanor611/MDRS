@@ -63,7 +63,7 @@ L= round(L);  %Km
 n= 100;
 [sP, nSP]= calculatePaths(L,T,n);
 
-fprintf("Number of diferent paths for each flow: ");
+fprintf('Number of diferent paths for each flow: ');
 nSP
 
 %% 1.b) % random strat
@@ -94,15 +94,15 @@ for limit = limits
     end
     plot(sort(allValues));
     hold on;
-    fprintf("%d best paths\n", limit);
+    fprintf('%d best paths\n', limit);
     fprintf('   Best load = %.2f Gbps\n', bestLoad);
     fprintf('   No. of solutions = %d\n',length(allValues));
     fprintf('   Averg. quality of solutions = %.2f Gbps\n',mean(allValues));
 end
 hold off;
-title("Minimun worst link load (Random)");
+title('Minimun worst link load (Random)');
 legend({'all paths','10 shortest paths','5 shortest paths'}, 'Location', 'northwest');
-ylabel("Minimun worst link load (Gbps)");
+ylabel('Minimun worst link load (Gbps)');
 
 
 %% 1.c) % greedy randomized strat
@@ -114,7 +114,6 @@ figure('Name','Ex. 1.c)','NumberTitle','off');
 for limit = limits
     t= tic;
     bestLoad= inf;
-    sol= zeros(1,nFlows);
     allValues= [];
     while toc(t)<10
         ax2 = randperm(nFlows); % array numa ordem aleatória
@@ -143,14 +142,14 @@ for limit = limits
     end
     plot(sort(allValues));
     hold on;
-    fprintf("%d best paths\n", limit);
+    fprintf('%d best paths\n', limit);
     fprintf('   Best load = %.2f Gbps\n', bestLoad);
     fprintf('   No. of solutions = %d\n',length(allValues));
     fprintf('   Averg. quality of solutions = %.2f Gbps\n',mean(allValues));
 end
 hold off;
-title("Minimun worst link load (GREEDY RANDOMIZED)");
+title('Minimun worst link load (Greddy Randomized)');
 legend({'all paths','10 shortest paths','5 shortest paths'}, 'Location', 'southeast');
-ylabel("Minimun worst link load (Gbps)");
+ylabel('Minimun worst link load (Gbps)');
 
 fprintf("all set!\n")
