@@ -64,7 +64,7 @@ L= round(L);  %Km
 limits = [inf, 10, 5];
 
 fprintf('RANDOM:\n');
-figure('Name','Ex. 2.b)','NumberTitle','off');
+figure('Name','Ex. 2.a)','NumberTitle','off');
 for limit = limits
     t= tic;
     bestEnergy= inf;
