@@ -66,12 +66,11 @@ n= 100;
 fprintf("Number of diferent paths for each flow: ");
 nSP
 
+limits = [inf, 10, 5];
 %% 1.b) % random strat
 
-limits = [inf, 10, 5];
-
 fprintf('RANDOM:\n');
-figure('Name','Ex. 1.b)','NumberTitle','off');
+figure('Name','Ex. 2.)','NumberTitle','off');
 for limit = limits
     t= tic;
     bestLoad= inf;
@@ -107,10 +106,8 @@ ylabel("Minimun worst link load (Gbps)");
 
 %% 1.c) % greedy randomized strat
 
-limits = [inf, 10, 5];
-
 fprintf('GREEDY RANDOMIZED:\n');
-figure('Name','Ex. 1.c)','NumberTitle','off');
+figure(2);
 for limit = limits
     t= tic;
     bestLoad= inf;
@@ -134,7 +131,8 @@ for limit = limits
             end
             sol(i) = k_best;
         end
-        load= best;
+        Loads= calculateLinkLoads(nNodes,Links,T,sP,sol);
+        load= max(max(Loads(:,3:4)));
         allValues= [allValues load];
         if load<bestLoad
             bestSol= sol;
@@ -150,7 +148,7 @@ for limit = limits
 end
 hold off;
 title("Minimun worst link load (GREEDY RANDOMIZED)");
-legend({'all paths','10 shortest paths','5 shortest paths'}, 'Location', 'southeast');
+legend({'all paths','10 shortest paths','5 shortest paths'}, 'Location', 'northwest');
 ylabel("Minimun worst link load (Gbps)");
 
 fprintf("all set!\n")
