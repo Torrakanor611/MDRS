@@ -1,3 +1,6 @@
+clear all;
+close all;
+
 Nodes= [30 70
        350 40
        550 180
@@ -153,7 +156,7 @@ legend({'all paths','10 shortest paths','5 shortest paths'}, 'Location', 'southe
 ylabel('Minimun worst link load (Gbps)');
 
 
-%% 1.d)
+%% 1.d) % hill climbing multi start
 
 fprintf('MULTI START HILL CLIMBING:\n');
 figure('Name','Ex. 1.d)','NumberTitle','off');
@@ -168,6 +171,7 @@ for limit = limits
     while toc(t) < 10
         %Greedy Randomized Solution
         [bestSol,bestLoad] = greedyRandomizedLoads(nFlows,nSP, nNodes, Links, T, sP, limit);
+        allValues= [allValues bestLoad];
         repeat = true;
         while repeat
             neighborBest= inf;
@@ -195,7 +199,7 @@ for limit = limits
     plot(sort(allValues));
     hold on;
     fprintf('%d best paths\n', limit);
-    fprintf('   Best load = %.2f Gbps\n', bestLoad);
+    fprintf('   Best load = %.2f Gbps\n', globalBestLoad);
     fprintf('   No. of solutions = %d\n',length(allValues));
     fprintf('   Averg. quality of solutions = %.2f Gbps\n',mean(allValues));
 end

@@ -8,7 +8,6 @@ function [av, nSol, nL] = BuildNeighbor(bestSol,i, sP, nSP, Links, nNodes, T, nL
 %   nNodes - Network Nodes
 %   T - Network flows
 %   allValues - to store load values for plot
-%   six - if using six shortest paths or not
 %   nLoad - best load found with  greedy randomized solution
 
 nFlows= size(bestSol);
