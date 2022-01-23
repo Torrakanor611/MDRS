@@ -200,26 +200,25 @@ for limit = limits
     while toc(t) < 10
         %Greedy Randomized Solution
         [bestSol,bestEnergy] = greedyRandomizedEnergy(nFlows,nSP, nNodes, Links, T, L, sP, limit);
-        allValues= [allValues bestEnergy];
         repeat = true;
         while repeat
-            neighborBest= inf;
             %Iterate through all values of the solution (to calculate best neighbor) 
+            neighborBest= inf;
             for i=1:nFlows
-                [av, neighborSol, eN]= BuildNeighborEnergy(bestSol,i, sP, nSP, Links, nNodes, T, L, bestEnergy);
-                allValues= [allValues av];
-                if eN < neighborBest
-                    neighborBest= eN;
-                    neighborBestsol= neighborSol; 
+                [nS, nE]= BuildNeighborEnergy(bestSol,i, sP, nSP, Links, nNodes, T, L, bestEnergy);
+                if nE < neighborBest
+                    neighborBest= nE;
+                    neighborSol= nS;
                 end
             end
             if neighborBest < bestEnergy
-                bestSol= neighborBestsol;
+                bestSol= neighborSol;
                 bestEnergy= neighborBest;
             else
                 repeat= false;
             end
         end
+        allValues= [allValues bestEnergy];
         if bestEnergy < globalBestEnergy
             globalBestEnergy= bestEnergy;
             globalSol= bestSol;
@@ -236,4 +235,4 @@ end
 hold off;
 title('Minimun energy consumption of network (Multi Start Hill Climbing)');
 legend({'all paths','10 shortest paths','5 shortest paths'}, 'Location', 'southeast');
-ylabel('Minimun energy consumption (Gbps)');
+ylabel('Energy (J)');

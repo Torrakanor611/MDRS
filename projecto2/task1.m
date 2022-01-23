@@ -161,37 +161,35 @@ ylabel('Minimun worst link load (Gbps)');
 fprintf('MULTI START HILL CLIMBING:\n');
 figure('Name','Ex. 1.d)','NumberTitle','off');
 
-
 limits = [inf, 10, 5];
 for limit = limits
     %Build a multi start hill climbing solution
-    globalBest= inf;
+    globalBestLoad= inf;
     allValues= []; 
     t=tic;
     while toc(t) < 10
         %Greedy Randomized Solution
         [bestSol,bestLoad] = greedyRandomizedLoads(nFlows,nSP, nNodes, Links, T, sP, limit);
-        allValues= [allValues bestLoad];
         repeat = true;
         while repeat
-            neighborBest= inf;
             %Iterate through all values of the solution (to calculate best neighbor) 
+            neighborBest= inf;
             for i=1:nFlows
-                [av, neighborSol, nL]= BuildNeighbor(bestSol,i, sP, nSP, Links, nNodes, T, bestLoad);
-                allValues= [allValues av];
+                [nS, nL]= BuildNeighbor(bestSol,i, sP, nSP, Links, nNodes, T, bestLoad);
                 if nL < neighborBest
                     neighborBest= nL;
-                    neighborBestsol= neighborSol; 
+                    neighborSol= nS;
                 end
             end
             if neighborBest < bestLoad
-                bestSol= neighborBestsol;
+                bestSol= neighborSol;
                 bestLoad= neighborBest;
             else
                 repeat= false;
             end
         end
-        if bestLoad < globalBest
+        allValues= [allValues bestLoad];
+        if bestLoad < globalBestLoad
             globalBestLoad= bestLoad;
             globalSol= bestSol;
         end

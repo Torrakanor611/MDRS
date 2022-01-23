@@ -1,4 +1,4 @@
-function [av, nSol, eN] = BuildNeighborEnergy(bestSol,i, sP, nSP, Links, nNodes, T, L, bestEnergy)
+function [nSol, nEn] = BuildNeighborEnergy(bestSol,i, sP, nSP, Links, nNodes, T, L, bestEnergy)
 %Find best neighbor of a given solution
 %   i - flow from whom we will choose neighbors
 %   bestSol - current solution 
@@ -7,14 +7,16 @@ function [av, nSol, eN] = BuildNeighborEnergy(bestSol,i, sP, nSP, Links, nNodes,
 %   Links - Links of the network
 %   nNodes - Network Nodes
 %   T - Network flows
-%   allValues - to store load values for plot
+%   L - Distances between Nodes
 %   bestEnergy - best energy found with  greedy randomized solution
 
 nFlows= size(bestSol);
 nSol= bestSol;
-av= [];
-eN= bestEnergy;
+nEn= bestEnergy;
 nLinks= size(Links,1);
+
+k=0;
+value=0;
 
 for n=1:nFlows
     if n~=i
@@ -31,19 +33,20 @@ for n=1:nFlows
                             energy= energy + L(Loads(a,1),Loads(a,2));
                         end
                     end
-                    av= [av energy];
                 else
                     energy= inf;
                 end
-                if energy < eN
-                    nSol= newNeighbor;
-                    eN= energy; 
+                if energy < nEn
+                    k= n;
+                    value= j;
                 end
             end
         end
     end
 end
-
+if k>0
+    nSol(k)= value;
+end
 
 
 end
