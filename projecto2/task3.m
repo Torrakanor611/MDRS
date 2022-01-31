@@ -101,5 +101,56 @@ end
 fprintf('average availability for best paths: %f\n', mean(avail));
 fprintf('average availability for 2nd best paths disjoint with best path: %f\n', mean(avail2nd));
 
+%% 3.c)
 
+[sP, nSP] = best2Paths(logA, T);
+p1st = cell(nFlows, 1);
+p2nd = cell(nFlows, 1);
+for i = 1:nFlows
+    p1st{i} = sP{i};
+    p2nd{i} = sP{i + nFlows};
+end
+sol= ones(1, nFlows);
+% best
+Loads1st = calculateLinkLoads(nNodes,Links,T,p1st,sol)
+% 2nd best disjoint
+Loads2nd = calculateLinkLoads(nNodes,Links,T,p2nd,sol);
+
+Loads = [Loads1st(:,1), Loads1st(:,2), (Loads1st(:,3) + Loads2nd(:,3)), (Loads1st(:,4) + Loads2nd(:,4))];
+fprintf("Proteção 1+1:\n")
+for i = 1 : nLinks
+    sum = Loads(i,3) + Loads(i,4);
+    fprintf('link nº%-2d || %-2d <-> %2d : %-5.2f Gb ', i, Loads(i,1), Loads(i,2), Loads(i,3))
+    if Loads(i,3) > 10
+        fprintf("> 10 Gb");
+    else
+        fprintf("       ");
+    end
+    fprintf(' | %-2d <-> %2d : %-5.2f Gb ', Loads(i,2), Loads(i,1), Loads(i,4))
+    if Loads(i,3) > 10
+        fprintf("> 10 Gb");
+    else
+        fprintf("       ");
+    end
+    fprintf("\n");
+end
+% 3.d)
+Loads = calculateLinkLoads1to1(nNodes, Links, T, p1st, p2nd);
+fprintf("\nProteção 1:1:\n")
+for i = 1 : nLinks
+    sum = Loads(i,3) + Loads(i,4);
+    fprintf('link nº%-2d || %-2d -> %2d : %-5.2f Gb ', i, Loads(i,1), Loads(i,2), Loads(i,3))
+    if Loads(i,3) > 10
+        fprintf("> 10 Gb");
+    else
+        fprintf("       ");
+    end
+    fprintf(' | %-2d -> %2d : %-5.2f Gb ', Loads(i,2), Loads(i,1), Loads(i,4))
+    if Loads(i,3) > 10
+        fprintf("> 10 Gb");
+    else
+        fprintf("       ");
+    end
+    fprintf("\n");
+end
 
