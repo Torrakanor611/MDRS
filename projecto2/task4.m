@@ -72,4 +72,23 @@ clc
 k= 10;
 [sP, nSP, s2ndP, ns2ndP] = bestKpaths(logA, T, k);
 
+% print 
+%{
+for i = 1:nFlows
+    cell1 = sP{i};
+    cell2 = s2ndP{i};
+    i
+    for j = 1:k
+        path1 = cell1{j};
+        if ~isempty(cell2{j})
+            path2 = cell2{j}{1};
+        else
+            path2 = []
+        end
+        disp(path1)
+        disp(path2)
+    end
+end
+%}
+
 
