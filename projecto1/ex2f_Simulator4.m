@@ -68,7 +68,7 @@ while (TRANSMITTEDPACKETS+TRANSMITTEDPACKETSV)<P               % Stopping criter
                     STATE= 1;
                     EventList = [EventList; DEPARTURE, Clock + 8*PacketSize/(C*10^6), PacketSize, Clock, 0];
                 else                                        % Queue occupation must not become higher than 90%
-                    if QUEUEOCCUPATION + PacketSize <= f && ((QUEUEOCCUPATION+PacketSize)/f) <= 0.9
+                    if ((QUEUEOCCUPATION+PacketSize)/f) <= 0.9
                         QUEUE= [QUEUE;PacketSize , Clock, 0];
                         QUEUEOCCUPATION= QUEUEOCCUPATION + PacketSize;
                     else

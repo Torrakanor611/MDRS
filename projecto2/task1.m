@@ -1,3 +1,6 @@
+clear all;
+close all;
+
 Nodes= [30 70
        350 40
        550 180
@@ -152,4 +155,55 @@ title('Minimun worst link load (Greddy Randomized)');
 legend({'all paths','10 shortest paths','5 shortest paths'}, 'Location', 'southeast');
 ylabel('Minimun worst link load (Gbps)');
 
-fprintf("all set!\n")
+
+%% 1.d) % hill climbing multi start
+
+fprintf('MULTI START HILL CLIMBING:\n');
+figure('Name','Ex. 1.d)','NumberTitle','off');
+
+limits = [inf, 10, 5];
+for limit = limits
+    %Build a multi start hill climbing solution
+    globalBestLoad= inf;
+    allValues= []; 
+    t=tic;
+    while toc(t) < 10
+        %Greedy Randomized Solution
+        [bestSol,bestLoad] = greedyRandomizedLoads(nFlows,nSP, nNodes, Links, T, sP, limit);
+        repeat = true;
+        while repeat
+            %Iterate through all values of the solution (to calculate best neighbor) 
+            neighborBest= inf;
+            for i=1:nFlows
+                [nS, nL]= BuildNeighbor(bestSol,i, sP, nSP, Links, nNodes, T, bestLoad);
+                if nL < neighborBest
+                    neighborBest= nL;
+                    neighborSol= nS;
+                end
+            end
+            if neighborBest < bestLoad
+                bestSol= neighborSol;
+                bestLoad= neighborBest;
+            else
+                repeat= false;
+            end
+        end
+        allValues= [allValues bestLoad];
+        if bestLoad < globalBestLoad
+            globalBestLoad= bestLoad;
+            globalSol= bestSol;
+        end
+    end
+    plot(sort(allValues));
+    hold on;
+    fprintf('%d best paths\n', limit);
+    fprintf('   Best load = %.2f Gbps\n', globalBestLoad);
+    fprintf('   No. of solutions = %d\n',length(allValues));
+    fprintf('   Averg. quality of solutions = %.2f Gbps\n',mean(allValues));
+end
+hold off;
+title('Minimun worst link load (Multi Start Hill Climbing)');
+legend({'all paths','10 shortest paths','5 shortest paths'}, 'Location', 'southeast');
+ylabel('Minimun worst link load (Gbps)');
+
+

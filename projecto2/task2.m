@@ -1,3 +1,6 @@
+clear all;
+close all;
+
 Nodes= [30 70
        350 40
        550 180
@@ -58,6 +61,9 @@ for i=1:nLinks
 end
 L= round(L);  %Km
 
+% Compute up to 100 paths for each flow:
+n= 100;
+[sP, nSP]= calculatePaths(L,T,n);
 
 %% 2.a) % random strat
 
@@ -177,5 +183,56 @@ for limit = limits
 end
 hold off;
 title('Minimun energy consumption of network (Greddy Randomized)');
+legend({'all paths','10 shortest paths','5 shortest paths'}, 'Location', 'southeast');
+ylabel('Energy (J)');
+
+%% 2.c) % hill climb multi start
+
+fprintf('MULTI START HILL CLIMBING:\n');
+figure('Name','Ex. 2.c)','NumberTitle','off');
+
+limits = [inf, 10, 5];
+for limit = limits
+    %Build a multi start hill climbing solution
+    globalBestEnergy= inf;
+    allValues= []; 
+    t=tic;
+    while toc(t) < 10
+        %Greedy Randomized Solution
+        [bestSol,bestEnergy] = greedyRandomizedEnergy(nFlows,nSP, nNodes, Links, T, L, sP, limit);
+        repeat = true;
+        while repeat
+            %Iterate through all values of the solution (to calculate best neighbor) 
+            neighborBest= inf;
+            for i=1:nFlows
+                [nS, nE]= BuildNeighborEnergy(bestSol,i, sP, nSP, Links, nNodes, T, L, bestEnergy);
+                if nE < neighborBest
+                    neighborBest= nE;
+                    neighborSol= nS;
+                end
+            end
+            if neighborBest < bestEnergy
+                bestSol= neighborSol;
+                bestEnergy= neighborBest;
+            else
+                repeat= false;
+            end
+        end
+        allValues= [allValues bestEnergy];
+        if bestEnergy < globalBestEnergy
+            globalBestEnergy= bestEnergy;
+            globalSol= bestSol;
+        end
+    end
+    plot(sort(allValues));
+    hold on;
+    fprintf('%d best paths\n', limit);
+    fprintf('   Best energy = %.1f\n', globalBestEnergy);
+    fprintf('   No. of solutions = %d\n', length(allValues));
+    aux = allValues(allValues ~= inf);
+    fprintf('   Av. quality of solutions = %.1f\n' ,mean(aux));
+end
+hold off;
+title('Minimun energy consumption of network (Multi Start Hill Climbing)');
 legend({'all paths','10 shortest paths','5 shortest paths'}, 'Location', 'southeast');
 ylabel('Energy (J)');
