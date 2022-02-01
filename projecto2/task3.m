@@ -68,6 +68,7 @@ logA = -log(A);
 
 %% 3.a)
 % Compute up to 1 paths for each flow:
+fprintf("Alínea A\n");
 n= 1;
 % dar a matrix -log da matrix de A.
 [sP, nSP]= calculatePaths(logA,T,n);
@@ -80,6 +81,7 @@ end
 
 %% 3.b)
 clc
+fprintf("Alínea B\n");
 [sP, nSP] = best2Paths(logA, T);
 avail = zeros(1, nFlows);      
 avail2nd = zeros(1, nFlows);
@@ -102,7 +104,7 @@ fprintf('average availability for best paths: %f\n', mean(avail));
 fprintf('average availability for 2nd best paths disjoint with best path: %f\n', mean(avail2nd));
 
 %% 3.c)
-
+fprintf("Alínea C");
 [sP, nSP] = best2Paths(logA, T);
 p1st = cell(nFlows, 1);
 p2nd = cell(nFlows, 1);
@@ -134,7 +136,12 @@ for i = 1 : nLinks
     end
     fprintf("\n");
 end
+
+
+
+
 % 3.d)
+fprintf("Alínea D");
 Loads = calculateLinkLoads1to1(nNodes, Links, T, p1st, p2nd);
 fprintf("\nProteção 1:1:\n")
 for i = 1 : nLinks

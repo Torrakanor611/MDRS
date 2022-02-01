@@ -63,7 +63,7 @@ L= round(L);  %Km
 
 % 1.a)
 % Compute up to 100 paths for each flow:
-n= 100;
+n= inf;
 [sP, nSP]= calculatePaths(L,T,n);
 
 fprintf('Number of diferent paths for each flow: ');
