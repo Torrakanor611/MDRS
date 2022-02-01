@@ -79,16 +79,37 @@ for i = 1:nFlows
     cell2 = s2ndP{i};
     i
     for j = 1:k
-        path1 = cell1{j};
+        path1 = cell1{j}
         if ~isempty(cell2{j})
-            path2 = cell2{j}{1};
+            path2 = cell2{j}{1}
         else
             path2 = []
         end
-        disp(path1)
-        disp(path2)
     end
 end
 %}
+
+ax2 = randperm(nFlows); % array numa ordem aleatória
+for i= ax2
+    k_best = 0;
+    best = inf;
+
+    flow10 = sP{i}
+
+    for j= 1:k
+        % estes caminhos podem ser vazios
+        pair = [flow10{j}, flow2nd10{j}{1}]
+        pair
+        Loads= calculateLinkLoads1to1(nNodes,Links,T,pair(1), pair(2));
+        load= max(max(Loads(:,3:4)));
+        if load < best
+            k_best = k;
+            best = load;
+        end
+    end
+    sol(i) = k_best;
+end
+
+
 
 
