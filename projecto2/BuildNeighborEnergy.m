@@ -39,6 +39,7 @@ for n=1:nFlows
                 if energy < nEn
                     k= n;
                     value= j;
+                    nEn= energy;
                 end
             end
         end

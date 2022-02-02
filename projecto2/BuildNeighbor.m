@@ -26,7 +26,8 @@ for n=1:nFlows
                 load= max(max(nLoads(:,3:4)));
                 if load < nL
                     k=n;
-                    value= j; 
+                    value= j;
+                    nL= load;
                 end
             end
         end
