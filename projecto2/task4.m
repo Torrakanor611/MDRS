@@ -89,17 +89,15 @@ for i = 1:nFlows
 end
 %}
 
-globalbestcell1 = cell(nFlows, 1);
-globalbestcell2 = cell(nFlows, 1);
+allValues = [];
 
-for xx= 1:nFlows
-    globalbestcell1{xx} = {[]};
-    globalbestcell2{xx} = {[]};
-end
+globalbestcell1 = 0;
+globalbestcell2 = 0;
+
 globalbestpairindex = [];
 globalbestload = inf;
 t=tic;
-while toc(t) < 10
+while toc(t) < 30
     ax2 = randperm(nFlows); % array numa ordem aleatória
     
     bestcell1 = cell(nFlows, 1);
@@ -158,10 +156,10 @@ while toc(t) < 10
 
     repeat = true;
     
+    neighborBestLoad = inf;
+    neighborBestcell1 = 0;
+    neighborBestcell2 = 0;
     while repeat
-        neighborBestLoad = inf;
-        neighborBestcell1 = 0;
-        neighborBestcell2 = 0;
 
         for i= 1:nFlows
             
@@ -199,6 +197,7 @@ while toc(t) < 10
             repeat = false;
         end
     end
+    allValues = [allValues best];
     if best < globalbestload
         globalbestload = best;
         globalbestcell1 = neighborBestcell1;
@@ -207,7 +206,32 @@ while toc(t) < 10
     end
 end
 
-bestpairindex
+plot(sort(allValues));
+hold on;
+fprintf('Best load = %.2f Gbps\n', globalbestload);
+fprintf('No. of solutions = %d\n',length(allValues));
+fprintf('Averg. quality of solutions = %.2f Gbps\n',mean(allValues));
+hold off;
+title('Minimun worst link load (Multi Start Hill Climbing) with 1 to 1 protection flows');
+ylabel('Minimun worst link load (Gbps)');
+Loads = calculateLinkLoads1to1(nNodes, Links, T, globalbestcell1, globalbestcell2);
+fprintf("\nProteção 1:1:\n")
+for i = 1 : nLinks
+    sum = Loads(i,3) + Loads(i,4);
+    fprintf('link nº%-2d || %-2d -> %2d : %-5.2f Gb ', i, Loads(i,1), Loads(i,2), Loads(i,3))
+    if Loads(i,3) > 10
+        fprintf("> 10 Gb");
+    else
+        fprintf("       ");
+    end
+    fprintf(' | %-2d -> %2d : %-5.2f Gb ', Loads(i,2), Loads(i,1), Loads(i,4))
+    if Loads(i,3) > 10
+        fprintf("> 10 Gb");
+    else
+        fprintf("       ");
+    end
+    fprintf("\n");
+end
 
 
 
