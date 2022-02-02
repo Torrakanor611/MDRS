@@ -92,16 +92,16 @@ for n = 1 : (nFlows)
     fprintf('%15s','best: ');
     printPath(path, '  ')
     avail(n) = calculateAvailability(A, path);
-    fprintf('%13s | availability: %f', '', avail(n));
+    fprintf('%13s | availability: %.4f', '', avail(n));
     fprintf('\n')
     fprintf('%5s', 'best disjoint: ')
     printPath(path2nd, '  ')
     avail2nd(n) = calculateAvailability(A, path2nd);
-    fprintf('%5s | availability: %f', '', avail2nd(n));
+    fprintf('%5s | availability: %.4f', '', avail2nd(n));
     fprintf('\n')
 end
-fprintf('average availability for best paths: %f\n', mean(avail));
-fprintf('average availability for 2nd best paths disjoint with best path: %f\n', mean(avail2nd));
+fprintf('average availability for best paths: %.4f\n', mean(avail));
+fprintf('average availability for 2nd best paths disjoint with best path: %.4f\n', mean(avail2nd));
 
 %% 3.c)
 fprintf("Alínea C");
@@ -114,14 +114,13 @@ for i = 1:nFlows
 end
 sol= ones(1, nFlows);
 % best
-Loads1st = calculateLinkLoads(nNodes,Links,T,p1st,sol)
+Loads1st = calculateLinkLoads(nNodes,Links,T,p1st,sol);
 % 2nd best disjoint
 Loads2nd = calculateLinkLoads(nNodes,Links,T,p2nd,sol);
 
 Loads = [Loads1st(:,1), Loads1st(:,2), (Loads1st(:,3) + Loads2nd(:,3)), (Loads1st(:,4) + Loads2nd(:,4))];
 fprintf("Proteção 1+1:\n")
 for i = 1 : nLinks
-    sum = Loads(i,3) + Loads(i,4);
     fprintf('link nº%-2d || %-2d <-> %2d : %-5.2f Gb ', i, Loads(i,1), Loads(i,2), Loads(i,3))
     if Loads(i,3) > 10
         fprintf("> 10 Gb");
@@ -136,18 +135,16 @@ for i = 1 : nLinks
     end
     fprintf("\n");
 end
+fprintf("Sum of all links in both directions: %.2f Gb\n", sum(Loads(:,3)) + sum(Loads(:,4)))
 
 
 
 
-% 3.d)
+%% 3.d)
 fprintf("Alínea D");
-p1st
-p2nd
 Loads = calculateLinkLoads1to1(nNodes, Links, T, p1st, p2nd);
-fprintf("\nProteção 1:1:\n")
+fprintf("\nProteção 1:1:\n");
 for i = 1 : nLinks
-    sum = Loads(i,3) + Loads(i,4);
     fprintf('link nº%-2d || %-2d -> %2d : %-5.2f Gb ', i, Loads(i,1), Loads(i,2), Loads(i,3))
     if Loads(i,3) > 10
         fprintf("> 10 Gb");
@@ -162,4 +159,5 @@ for i = 1 : nLinks
     end
     fprintf("\n");
 end
+fprintf("Sum of all links in both directions: %.2f Gb\n", sum(Loads(:,3)) + sum(Loads(:,4)))
 

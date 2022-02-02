@@ -149,6 +149,13 @@ while toc(t) < 30
         bestpairindex = [bestpairindex k_best];
     end
     %{
+    for n= 1:nFlows
+        disp(bestcell1{n});
+        disp(bestcell2{n});
+    end
+    %}
+
+    %{
     for mm= 1:length(bestcell1)
         bestcell1{mm}
     end
@@ -162,9 +169,6 @@ while toc(t) < 30
     while repeat
 
         for i= 1:nFlows
-            
-            %[nS, nE]= BuildNeighborEnergy(bestSol,i, sP, nSP, Links, nNodes, T, L, bestEnergy);
-            
             kk = 0;
             value = 0;
             for n=1:nFlows
@@ -175,7 +179,7 @@ while toc(t) < 30
                     for j= 1:k
                         if j~= bestpairindex(n)
                             newNeighbor1{n} = sP1{n}(j);
-                            newNeighbor1{n} = sP2{n}(j);
+                            newNeighbor2{n} = sP2{n}(j);
                             Loads= calculateLinkLoads1to1(nNodes, Links, T, newNeighbor1, newNeighbor2);
                             load= max(max(Loads(:,3:4)));
                             if load < neighborBestLoad
@@ -205,7 +209,18 @@ while toc(t) < 30
         globalbestpairindex = bestpairindex;
     end
 end
-
+for n = 1 : nFlows
+    path1 = globalbestcell1{n}{1};
+    path2 = globalbestcell2{n}{1};
+    fprintf('flow %d, %2d <-> %2d:\n', n, T(n,1), T(n,2))
+    fprintf('%21s', 'best path: ');
+    printPath(path1, '  ');
+    fprintf('\n');
+    fprintf('\tprotection path: ');
+    printPath(path2, '  ');
+    fprintf('\n');
+end
+fprintf('\n');
 plot(sort(allValues));
 hold on;
 fprintf('Best load = %.2f Gbps\n', globalbestload);
@@ -215,9 +230,9 @@ hold off;
 title('Minimun worst link load (Multi Start Hill Climbing) with 1 to 1 protection flows');
 ylabel('Minimun worst link load (Gbps)');
 Loads = calculateLinkLoads1to1(nNodes, Links, T, globalbestcell1, globalbestcell2);
-fprintf("\nProteção 1:1:\n")
+fprintf('Sum of all links in both directions: %.2f Gb\n', sum(Loads(:,3)) + sum(Loads(:,4)))
+fprintf('\nProteção 1:1:\n')
 for i = 1 : nLinks
-    sum = Loads(i,3) + Loads(i,4);
     fprintf('link nº%-2d || %-2d -> %2d : %-5.2f Gb ', i, Loads(i,1), Loads(i,2), Loads(i,3))
     if Loads(i,3) > 10
         fprintf("> 10 Gb");
