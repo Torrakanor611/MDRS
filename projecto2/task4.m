@@ -67,28 +67,12 @@ A(isnan(A))= 0;
 % links com valor mais perto de 0 são os mais curtos
 logA = -log(A);
 
-%% 4.a
+%% 4.a)
 clc
 k= 10;
 [sP1, nSP1, sP2, nSP2] = bestKpaths(logA, T, k);
 
-% print 
-%{
-for i = 1:nFlows
-    cell1 = sP1{i};
-    cell2 = sP2{i};
-    i
-    for j = 1:k
-        path1 = cell1{j}
-        if ~isempty(cell2{j})
-            path2 = cell2{j}
-        else
-            path2 = []
-        end
-    end
-end
-%}
-
+% 4.b)
 allValues = [];
 
 globalbestcell1 = 0;
@@ -98,45 +82,26 @@ globalbestpairindex = [];
 globalbestload = inf;
 t=tic;
 while toc(t) < 30
-    ax2 = randperm(nFlows); % array numa ordem aleatória
-    
+    ax2 = randperm(nFlows); % array numa ordem aleatória    
     bestcell1 = cell(nFlows, 1);
-    bestcell2 = cell(nFlows, 1);
-    
+    bestcell2 = cell(nFlows, 1); 
     for xx= 1:nFlows
         bestcell1{xx} = {[]};
         bestcell2{xx} = {[]};
     end
-
-    bestpairindex = [];
-    
+    bestpairindex = []; 
     for i= ax2
-        %i
         k_best = 0;
         best = inf;
-    
         sp1K = sP1{i};
         sp2K = sP2{i};
-    
         for j= 1:k
-            %j
-            % estes caminhos podem ser vazios
             path1 = {sp1K{j}};
-            path2 = {sp2K{j}};
-    
+            path2 = {sp2K{j}}; 
             cell1 = bestcell1;
             cell2 = bestcell2;
-    
-    
             cell1{i} = path1;
             cell2{i} = path2;
-            
-            %{
-            for mm= 1:length(cell1)
-                cell1{mm}
-            end
-            %}
-    
             Loads= calculateLinkLoads1to1(nNodes,Links,T,cell1, cell2);
             load= max(max(Loads(:,3:4)));
             if load < best
@@ -148,26 +113,12 @@ while toc(t) < 30
         bestcell2{i} = {sp2K{k_best}};
         bestpairindex = [bestpairindex k_best];
     end
-    %{
-    for n= 1:nFlows
-        disp(bestcell1{n});
-        disp(bestcell2{n});
-    end
-    %}
-
-    %{
-    for mm= 1:length(bestcell1)
-        bestcell1{mm}
-    end
-    %}
-
     repeat = true;
     
     neighborBestLoad = inf;
     neighborBestcell1 = 0;
     neighborBestcell2 = 0;
     while repeat
-
         for i= 1:nFlows
             kk = 0;
             value = 0;
@@ -175,7 +126,6 @@ while toc(t) < 30
                 if n~= i
                     newNeighbor1= bestcell1;
                     newNeighbor2= bestcell2;
-
                     for j= 1:k
                         if j~= bestpairindex(n)
                             newNeighbor1{n} = sP1{n}(j);
@@ -209,17 +159,26 @@ while toc(t) < 30
         globalbestpairindex = bestpairindex;
     end
 end
+fprintf("Best solution found\n:");
+avail = zeros(1, nFlows);      
+avail2nd = zeros(1, nFlows);
 for n = 1 : nFlows
     path1 = globalbestcell1{n}{1};
     path2 = globalbestcell2{n}{1};
     fprintf('flow %d, %2d <-> %2d:\n', n, T(n,1), T(n,2))
     fprintf('%21s', 'best path: ');
     printPath(path1, '  ');
+    avail(n) = calculateAvailability(A, path1);
+    fprintf('%13s | availability: %.4f', '', avail(n));
     fprintf('\n');
     fprintf('\tprotection path: ');
     printPath(path2, '  ');
+    avail2nd(n) = calculateAvailability(A, path2);
+    fprintf('%5s | availability: %.4f', '', avail2nd(n));
     fprintf('\n');
 end
+fprintf('average availability for best paths: %.4f\n', mean(avail));
+fprintf('average availability for 2nd best paths disjoint with best path: %.4f\n', mean(avail2nd));
 fprintf('\n');
 plot(sort(allValues));
 hold on;
@@ -231,7 +190,7 @@ title('Minimun worst link load (Multi Start Hill Climbing) with 1 to 1 protectio
 ylabel('Minimun worst link load (Gbps)');
 Loads = calculateLinkLoads1to1(nNodes, Links, T, globalbestcell1, globalbestcell2);
 fprintf('Sum of all links in both directions: %.2f Gb\n', sum(Loads(:,3)) + sum(Loads(:,4)))
-fprintf('\nProteção 1:1:\n')
+fprintf('\nProteção 1:1 para a Best solution:\n')
 for i = 1 : nLinks
     fprintf('link nº%-2d || %-2d -> %2d : %-5.2f Gb ', i, Loads(i,1), Loads(i,2), Loads(i,3))
     if Loads(i,3) > 10
