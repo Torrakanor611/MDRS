@@ -142,6 +142,8 @@ end
 
 % 3.d)
 fprintf("Alínea D");
+p1st
+p2nd
 Loads = calculateLinkLoads1to1(nNodes, Links, T, p1st, p2nd);
 fprintf("\nProteção 1:1:\n")
 for i = 1 : nLinks

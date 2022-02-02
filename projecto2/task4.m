@@ -70,18 +70,18 @@ logA = -log(A);
 %% 4.a
 clc
 k= 10;
-[sP, nSP, s2ndP, ns2ndP] = bestKpaths(logA, T, k);
+[sP1, nSP1, sP2, nSP2] = bestKpaths(logA, T, k);
 
 % print 
 %{
 for i = 1:nFlows
-    cell1 = sP{i};
-    cell2 = s2ndP{i};
+    cell1 = sP1{i};
+    cell2 = sP2{i};
     i
     for j = 1:k
         path1 = cell1{j}
         if ~isempty(cell2{j})
-            path2 = cell2{j}{1}
+            path2 = cell2{j}
         else
             path2 = []
         end
@@ -89,26 +89,125 @@ for i = 1:nFlows
 end
 %}
 
-ax2 = randperm(nFlows); % array numa ordem aleatória
-for i= ax2
-    k_best = 0;
-    best = inf;
+globalbestcell1 = cell(nFlows, 1);
+globalbestcell2 = cell(nFlows, 1);
 
-    flow10 = sP{i}
+for xx= 1:nFlows
+    globalbestcell1{xx} = {[]};
+    globalbestcell2{xx} = {[]};
+end
+globalbestpairindex = [];
+globalbestload = inf;
+t=tic;
+while toc(t) < 10
+    ax2 = randperm(nFlows); % array numa ordem aleatória
+    
+    bestcell1 = cell(nFlows, 1);
+    bestcell2 = cell(nFlows, 1);
+    
+    for xx= 1:nFlows
+        bestcell1{xx} = {[]};
+        bestcell2{xx} = {[]};
+    end
 
-    for j= 1:k
-        % estes caminhos podem ser vazios
-        pair = [flow10{j}, flow2nd10{j}{1}]
-        pair
-        Loads= calculateLinkLoads1to1(nNodes,Links,T,pair(1), pair(2));
-        load= max(max(Loads(:,3:4)));
-        if load < best
-            k_best = k;
-            best = load;
+    bestpairindex = [];
+    
+    for i= ax2
+        %i
+        k_best = 0;
+        best = inf;
+    
+        sp1K = sP1{i};
+        sp2K = sP2{i};
+    
+        for j= 1:k
+            %j
+            % estes caminhos podem ser vazios
+            path1 = {sp1K{j}};
+            path2 = {sp2K{j}};
+    
+            cell1 = bestcell1;
+            cell2 = bestcell2;
+    
+    
+            cell1{i} = path1;
+            cell2{i} = path2;
+            
+            %{
+            for mm= 1:length(cell1)
+                cell1{mm}
+            end
+            %}
+    
+            Loads= calculateLinkLoads1to1(nNodes,Links,T,cell1, cell2);
+            load= max(max(Loads(:,3:4)));
+            if load < best
+                k_best = j;
+                best = load;
+            end
+        end
+        bestcell1{i} = {sp1K{k_best}};
+        bestcell2{i} = {sp2K{k_best}};
+        bestpairindex = [bestpairindex k_best];
+    end
+    %{
+    for mm= 1:length(bestcell1)
+        bestcell1{mm}
+    end
+    %}
+
+    repeat = true;
+    
+    while repeat
+        neighborBestLoad = inf;
+        neighborBestcell1 = 0;
+        neighborBestcell2 = 0;
+
+        for i= 1:nFlows
+            
+            %[nS, nE]= BuildNeighborEnergy(bestSol,i, sP, nSP, Links, nNodes, T, L, bestEnergy);
+            
+            kk = 0;
+            value = 0;
+            for n=1:nFlows
+                if n~= i
+                    newNeighbor1= bestcell1;
+                    newNeighbor2= bestcell2;
+
+                    for j= 1:k
+                        if j~= bestpairindex(n)
+                            newNeighbor1{n} = sP1{n}(j);
+                            newNeighbor1{n} = sP2{n}(j);
+                            Loads= calculateLinkLoads1to1(nNodes, Links, T, newNeighbor1, newNeighbor2);
+                            load= max(max(Loads(:,3:4)));
+                            if load < neighborBestLoad
+                                bestcell1 = newNeighbor1;
+                                bestcell2 = newNeighbor2;
+                                neighborBestLoad = load;
+                                bestpairindex(n) = j;
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        if neighborBestLoad < best
+            best = neighborBestLoad;
+            neighborBestcell1 = bestcell1;
+            neighborBestcell2 = bestcell2;
+        else
+            repeat = false;
         end
     end
-    sol(i) = k_best;
+    if best < globalbestload
+        globalbestload = best;
+        globalbestcell1 = neighborBestcell1;
+        globalbestcell2 = neighborBestcell2;
+        globalbestpairindex = bestpairindex;
+    end
 end
+
+bestpairindex
 
 
 

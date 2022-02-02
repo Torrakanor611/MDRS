@@ -165,7 +165,7 @@ limits = [inf, 10, 5];
 for limit = limits
     %Build a multi start hill climbing solution
     globalBestLoad= inf;
-    allValues= []; 
+    allValues= [];
     t=tic;
     while toc(t) < 10
         %Greedy Randomized Solution
